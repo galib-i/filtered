@@ -17,7 +17,7 @@ Better Vinted browsing.
 ## Get Started 
 For a Chromium-based browser (e.g. Brave, Chrome):
 
-1.  Clone or download (and unzip) this repository.
+1.  Clone or [download](https://github.com/galib-i/filtered/archive/refs/heads/main.zip) (and unzip) this repository.
 2.  Open your browser's extensions page (`chrome://extensions/`).
 3.  Toggle the "Developer mode" switch in the top right corner.
 4.  Click "Load unpacked" and select this project's folder.
