@@ -16,7 +16,7 @@ let settings = {
 function isNegativeBrand(brandName, negativeBrandList, enablePartialMatching) {
   return negativeBrandList.some((negativeBrand) =>
     enablePartialMatching
-      ? negativeBrand.length >= 2 && brandName.includes(negativeBrand)
+      ? negativeBrand.length >= 2 && brandName.includes(negativeBrand) // Partial matching for 2+ characters
       : brandName === negativeBrand,
   );
 }
