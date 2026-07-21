@@ -1,6 +1,6 @@
 const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Use testID to speficially target titles only, sizes and condition use the same selector
 const ITEM_CONTAINER_SELECTORS =
-  ".homepage-blocks__item, .feed-grid__item:not(.feed-grid__item--full-row), .item-view-items__item";
+  "[class*='homepage-blocks__item'], .feed-grid__item:not(.feed-grid__item--full-row), .item-view-items__item";
 const WARDROBE_SPOTLIGHT_SELECTOR =
   ".feed-grid__item.feed-grid__item--full-row";
 const ITEM_TITLE_SELECTORS =
