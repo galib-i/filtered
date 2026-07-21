@@ -16,12 +16,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Create .zip
-        run: |
-          zip -r filtered-chrome.zip . -x "*.git*" "*.github*" "README.md" "LICENSE"
-
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: filtered-chrome
-          path: filtered-chrome.zip
+          path: |
+            **/*
+            !.git/**
+            !.github/**
+            !README.md
+            !LICENSE
