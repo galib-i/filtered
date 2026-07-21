@@ -34,7 +34,7 @@ jobs:
       - name: Create .zip
         if: steps.version_check.outputs.changed == 'true'
         run: |
-          zip -r filtered-chrome.zip . -x "*.git*" "*.github*" "README.md" "LICENSE"
+          zip -r filtered.zip . -x "*.git*" "*.github*" "README.md" "LICENSE"
 
       - name: Create GitHub Release
         if: steps.version_check.outputs.changed == 'true'
@@ -42,5 +42,5 @@ jobs:
         with:
           tag_name: ${{ steps.version_check.outputs.version }}
           name: Release ${{ steps.version_check.outputs.version }}
-          files: filtered-chrome.zip
+          files: filtered.zip
           generate_release_notes: true

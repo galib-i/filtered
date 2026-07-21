@@ -1,10 +1,20 @@
 {
   "name": "Filtered",
   "description": "Clean up your Vinted search results.",
-  "version": "1.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{06556931-77fb-4a91-99a7-d85d30d7f36c}",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
   },
   "action": {
     "default_popup": "popup/popup.html",
