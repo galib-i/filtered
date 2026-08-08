@@ -1,10 +1,9 @@
 const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Use testID to speficially target titles only, sizes and condition use the same selector
 const ITEM_CONTAINER_SELECTORS =
-  "[class*='homepage-blocks__item'], .feed-grid__item:not(.feed-grid__item--full-row), .item-view-items__item";
-const WARDROBE_SPOTLIGHT_SELECTOR =
-  ".feed-grid__item.feed-grid__item--full-row";
+  "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
+const WARDROBE_SPOTLIGHT_SELECTOR = "[class*='feed-grid__item--full-row']";
 const ITEM_TITLE_SELECTORS =
-  ".new-item-box__container, .feed-grid__item-content, .item-view-items__item";
+  "[class*='new-item-box__container'], [class*='feed-grid__item-content'], [class*='item-view-items__item']";
 
 let settings = {
   negativeBrands: "",
@@ -23,11 +22,9 @@ function isNegativeBrand(brandName, negativeBrandList, enablePartialMatching) {
 
 function filterNegativeBrands() {
   // Reset all negative brands
-  document
-    .querySelectorAll(ITEM_CONTAINER_SELECTORS)
-    .forEach((itemContainer) => {
-      itemContainer.style.display = "";
-    });
+  document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
+    itemContainer.style.display = "";
+  });
 
   if (!settings.negativeBrands) return;
 
@@ -38,14 +35,7 @@ function filterNegativeBrands() {
 
   document.querySelectorAll(BRAND_SELECTORS).forEach((brandNode) => {
     const brandName = brandNode.textContent.trim().toLowerCase();
-    if (
-      !isNegativeBrand(
-        brandName,
-        negativeBrandList,
-        settings.enablePartialMatching,
-      )
-    )
-      return;
+    if (!isNegativeBrand(brandName, negativeBrandList, settings.enablePartialMatching)) return;
 
     const itemContainer = brandNode.closest(ITEM_CONTAINER_SELECTORS);
     if (itemContainer) {
@@ -64,9 +54,7 @@ function hideWardrobeSpotlight() {
 
 function showItemTitles() {
   if (!settings.showItemTitles) {
-    document
-      .querySelectorAll(".vinted-filter-title")
-      .forEach((el) => el.remove());
+    document.querySelectorAll(".vinted-filter-title").forEach((el) => el.remove());
     return;
   }
 
@@ -78,7 +66,7 @@ function showItemTitles() {
       const truncatedText = parts[0];
 
       // Find the .title-content element
-      const titleContentElem = item.querySelector(".title-content");
+      const titleContentElem = item.querySelector("[class*='title-content']");
       if (titleContentElem) {
         // Avoid inserting multiple times
         if (!item.querySelector(".vinted-filter-title")) {
@@ -87,9 +75,7 @@ function showItemTitles() {
           titleElem.className = "vinted-filter-title";
 
           // Copy CSS classes from the price element
-          const priceElem = titleContentElem.querySelector(
-            '[data-testid$="--price-text"]',
-          );
+          const priceElem = titleContentElem.querySelector('[data-testid$="--price-text"]');
           if (priceElem) {
             priceElem.classList.forEach((cls) => {
               titleElem.classList.add(cls);
@@ -116,8 +102,7 @@ function observeDynamicContent() {
       mutationsList.some((m) =>
         Array.from(m.addedNodes).some(
           (node) =>
-            node.nodeType === Node.ELEMENT_NODE &&
-            !node.classList.contains("vinted-filter-title"),
+            node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("vinted-filter-title"),
         ),
       )
     ) {
