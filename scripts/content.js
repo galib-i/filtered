@@ -80,6 +80,7 @@ function showItemTitles() {
             priceElem.classList.forEach((cls) => {
               titleElem.classList.add(cls);
             });
+            titleElem.style.fontWeight = "500";
           }
 
           // Insert before .title-content
