@@ -12,7 +12,7 @@ function updateActionForTab(tabId, tabUrl) {
     } else {
       chrome.action.disable(tabId);
     }
-  } catch (error) {
+  } catch {
     chrome.action.disable(tabId);
   }
 }

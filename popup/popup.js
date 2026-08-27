@@ -18,12 +18,8 @@ const cleanBrands = (input) =>
 
 document.addEventListener("DOMContentLoaded", () => {
   const negativeBrandsTextarea = document.getElementById("negativeBrands");
-  const enablePartialMatchingCheckbox = document.getElementById(
-    "enablePartialMatching",
-  );
-  const hideWardrobeSpotlightCheckbox = document.getElementById(
-    "hideWardrobeSpotlight",
-  );
+  const enablePartialMatchingCheckbox = document.getElementById("enablePartialMatching");
+  const hideWardrobeSpotlightCheckbox = document.getElementById("hideWardrobeSpotlight");
   const showItemTitlesCheckbox = document.getElementById("showItemTitles");
 
   const STORAGE_KEYS = [
