@@ -30,8 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
   const DEBOUCE = 300; // ms
 
-  const saveSettings = () => {
-    negativeBrandsTextarea.value = cleanBrands(negativeBrandsTextarea.value);
+  const saveSettings = (clean = false) => {
+    if (clean) {
+      negativeBrandsTextarea.value = cleanBrands(negativeBrandsTextarea.value);
+    }
 
     chrome.storage.sync.set({
       negativeBrands: negativeBrandsTextarea.value,
@@ -54,11 +56,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === negativeBrandsTextarea) dsaveSettings();
   });
 
+  negativeBrandsTextarea.addEventListener("blur", () => {
+    saveSettings(true);
+  });
+
+  window.addEventListener("blur", () => {
+    saveSettings(true);
+  });
+
   negativeBrandsTextarea.addEventListener("keydown", (e) => {
     if (e.key === "Enter") e.preventDefault();
   });
 
-  enablePartialMatchingCheckbox.addEventListener("change", saveSettings);
-  hideWardrobeSpotlightCheckbox.addEventListener("change", saveSettings);
-  showItemTitlesCheckbox.addEventListener("change", saveSettings);
+  enablePartialMatchingCheckbox.addEventListener("change", () => saveSettings(true));
+  hideWardrobeSpotlightCheckbox.addEventListener("change", () => saveSettings(true));
+  showItemTitlesCheckbox.addEventListener("change", () => saveSettings(true));
 });
