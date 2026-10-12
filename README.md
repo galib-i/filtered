@@ -10,6 +10,7 @@ Better Vinted browsing.
 > Supports all countries (domains), but may break due to layout updates.
 
 - Filter out items from unwanted brands.
+- Filter out items by title keywords.
 - Hide wardrobe spotlights.
 - Display item titles directly, without needing to click on them.
 

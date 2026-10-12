@@ -18,12 +18,16 @@ const cleanBrands = (input) =>
 
 document.addEventListener("DOMContentLoaded", () => {
   const negativeBrandsTextarea = document.getElementById("negativeBrands");
+  const applyToBrandsCheckbox = document.getElementById("applyToBrands");
+  const applyToTitlesCheckbox = document.getElementById("applyToTitles");
   const enablePartialMatchingCheckbox = document.getElementById("enablePartialMatching");
   const hideWardrobeSpotlightCheckbox = document.getElementById("hideWardrobeSpotlight");
   const showItemTitlesCheckbox = document.getElementById("showItemTitles");
 
   const STORAGE_KEYS = [
     "negativeBrands",
+    "applyToBrands",
+    "applyToTitles",
     "enablePartialMatching",
     "hideWardrobeSpotlight",
     "showItemTitles",
@@ -37,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chrome.storage.sync.set({
       negativeBrands: negativeBrandsTextarea.value,
+      applyToBrands: applyToBrandsCheckbox.checked,
+      applyToTitles: applyToTitlesCheckbox.checked,
       enablePartialMatching: enablePartialMatchingCheckbox.checked,
       hideWardrobeSpotlight: hideWardrobeSpotlightCheckbox.checked,
       showItemTitles: showItemTitlesCheckbox.checked,
@@ -47,6 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   chrome.storage.sync.get(STORAGE_KEYS, (result) => {
     negativeBrandsTextarea.value = result.negativeBrands || "";
+    applyToBrandsCheckbox.checked = result.applyToBrands ?? true;
+    applyToTitlesCheckbox.checked = result.applyToTitles ?? true;
     enablePartialMatchingCheckbox.checked = !!result.enablePartialMatching;
     hideWardrobeSpotlightCheckbox.checked = !!result.hideWardrobeSpotlight;
     showItemTitlesCheckbox.checked = !!result.showItemTitles;
@@ -68,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") e.preventDefault();
   });
 
+  applyToBrandsCheckbox.addEventListener("change", () => saveSettings(true));
+  applyToTitlesCheckbox.addEventListener("change", () => saveSettings(true));
   enablePartialMatchingCheckbox.addEventListener("change", () => saveSettings(true));
   hideWardrobeSpotlightCheckbox.addEventListener("change", () => saveSettings(true));
   showItemTitlesCheckbox.addEventListener("change", () => saveSettings(true));

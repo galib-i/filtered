@@ -7,24 +7,42 @@
     />
   </head>
   <body>
-    <label for="negativeBrands">Enter brands to hide (comma-separated):</label>
-    <textarea id="negativeBrands" placeholder="Shein, Primark.."></textarea>
+    <label for="negativeBrands">Enter terms to hide (comma-separated):</label>
+    <textarea id="negativeBrands" placeholder="Shein, Primark, Y2K, Oversized..."></textarea>
 
     <div id="options">
       <ul class="options-list">
+        <!-- Apply To Row -->
+        <li class="option apply-to-row">
+          <span class="apply-to-label">Apply to:</span>
+          <input type="checkbox" id="applyToBrands" checked />
+          <label class="checkbox-label" for="applyToBrands">Brands</label>
+
+          <input type="checkbox" id="applyToTitles" />
+          <label class="checkbox-label" for="applyToTitles">Titles</label>
+        </li>
+
+        <!-- Partial Matches -->
         <li class="option">
           <input type="checkbox" id="enablePartialMatching" />
-          <label class="checkbox-label" for="enablePartialMatching"
-            >Hide partial brand matches</label
-          >
+          <label class="checkbox-label" for="enablePartialMatching">Hide partial matches</label>
         </li>
+      </ul>
+
+      <hr class="divider" />
+
+      <ul class="options-list">
+        <!-- Hide Wardrobe Spotlight -->
         <li class="option">
           <input type="checkbox" id="hideWardrobeSpotlight" />
           <label class="checkbox-label" for="hideWardrobeSpotlight">Hide wardrobe spotlight</label>
         </li>
+
+        <!-- Show Item Titles -->
         <li class="option">
           <input type="checkbox" id="showItemTitles" />
           <label class="checkbox-label" for="showItemTitles">Show item titles</label>
+          <!-- GitHub -->
           <a href="https://github.com/galib-i/filtered" target="_blank" style="margin-left: auto">
             <i class="fa-brands fa-github"></i>
           </a>

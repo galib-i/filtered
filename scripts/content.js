@@ -1,47 +1,80 @@
-const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Use testID to speficially target titles only, sizes and condition use the same selector
+const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Use testID to specifically target titles only, sizes and condition use the same selector
 const ITEM_CONTAINER_SELECTORS =
   "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
 const WARDROBE_SPOTLIGHT_SELECTOR = "[class*='feed-grid__item--full-row']";
 const ITEM_TITLE_SELECTORS =
   "[class*='new-item-box__container'], [class*='feed-grid__item-content'], [class*='item-view-items__item']";
 
+// Defaults
 let settings = {
   negativeBrands: "",
+  applyToBrands: true,
+  applyToTitles: false,
   enablePartialMatching: false,
   hideWardrobeSpotlight: false,
   showItemTitles: false,
 };
 
-function isNegativeBrand(brandName, negativeBrandList, enablePartialMatching) {
-  return negativeBrandList.some((negativeBrand) =>
+// Matching for both brands and titles
+function isNegativeMatch(text, negativeList, enablePartialMatching) {
+  if (!text) return false;
+
+  return negativeList.some((negative) =>
     enablePartialMatching
-      ? negativeBrand.length >= 2 && brandName.includes(negativeBrand) // Partial matching for 2+ characters
-      : brandName === negativeBrand,
+      ? negative.length >= 2 && text.includes(negative) // Partial matching for 2+ characters
+      : text === negative,
   );
 }
 
-function filterNegativeBrands() {
-  // Reset all negative brands
+function filterByBrands(negativeBrandList) {
+  document.querySelectorAll(BRAND_SELECTORS).forEach((brandNode) => {
+    const brandName = brandNode.textContent.trim().toLowerCase();
+    if (isNegativeMatch(brandName, negativeBrandList, settings.enablePartialMatching)) {
+      const itemContainer = brandNode.closest(ITEM_CONTAINER_SELECTORS);
+      if (itemContainer) {
+        itemContainer.style.display = "none";
+      }
+    }
+  });
+}
+
+function filterByTitles(negativeBrandList) {
+  document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
+    // Skip if the brand filter already hid
+    if (itemContainer.style.display === "none") return;
+
+    const img = itemContainer.querySelector("img[alt]");
+    if (img && img.alt) {
+      // Extract the title before the first comma
+      const titleText = img.alt.split(",")[0].trim().toLowerCase();
+      if (isNegativeMatch(titleText, negativeBrandList, settings.enablePartialMatching)) {
+        itemContainer.style.display = "none";
+      }
+    }
+  });
+}
+
+function filterItems() {
+  // Reset all items
   document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
     itemContainer.style.display = "";
   });
 
   if (!settings.negativeBrands) return;
+  if (!settings.applyToBrands && !settings.applyToTitles) return;
 
   const negativeBrandList = settings.negativeBrands
     .split(",")
     .map((b) => b.trim().toLowerCase())
     .filter(Boolean);
 
-  document.querySelectorAll(BRAND_SELECTORS).forEach((brandNode) => {
-    const brandName = brandNode.textContent.trim().toLowerCase();
-    if (!isNegativeBrand(brandName, negativeBrandList, settings.enablePartialMatching)) return;
+  if (settings.applyToBrands) {
+    filterByBrands(negativeBrandList);
+  }
 
-    const itemContainer = brandNode.closest(ITEM_CONTAINER_SELECTORS);
-    if (itemContainer) {
-      itemContainer.style.display = "none";
-    }
-  });
+  if (settings.applyToTitles) {
+    filterByTitles(negativeBrandList);
+  }
 }
 
 function hideWardrobeSpotlight() {
@@ -92,7 +125,7 @@ function showItemTitles() {
 }
 
 function applyRules() {
-  filterNegativeBrands();
+  filterItems();
   showItemTitles();
   hideWardrobeSpotlight();
 }
@@ -126,8 +159,14 @@ chrome.storage.onChanged.addListener((changes, area) => {
       settings[key] = newValue;
     }
 
-    if (changes.negativeBrands || changes.enablePartialMatching) {
-      filterNegativeBrands();
+    // Run filterItems if any filter settings change
+    if (
+      changes.negativeBrands ||
+      changes.enablePartialMatching ||
+      changes.applyToBrands ||
+      changes.applyToTitles
+    ) {
+      filterItems();
     }
 
     if (changes.hideWardrobeSpotlight) {

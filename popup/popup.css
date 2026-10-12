@@ -7,6 +7,7 @@ body {
 }
 
 label,
+.apply-to-label,
 i.fa-brands {
   font-size: 14px;
   color: #5a6566;
@@ -60,6 +61,28 @@ div {
   display: flex;
   align-items: center;
   margin-bottom: 6px;
+}
+
+.apply-to-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.apply-to-row input[type="checkbox"] {
+  margin-right: 0;
+}
+
+.apply-to-label {
+  margin-right: 4px;
+  font-weight: 500;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 12px 0;
 }
 
 .option:last-child {
