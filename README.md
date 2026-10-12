@@ -3,7 +3,7 @@
 Better Vinted browsing.
 
 <p align="center">
-  <img width="595" height="479" alt="tutorial" src="https://github.com/user-attachments/assets/767f7ce1-c90a-4918-ab0a-62230bf757e7" />
+  <img width="595" alt="tutorial" src="https://github.com/user-attachments/assets/da00d176-9cf4-489a-91a5-2f4637b88a93" />
 </p>
 
 > [!NOTE]
@@ -21,7 +21,8 @@ For a Firefox-based browser (e.g. LibreWolf, Zen), you can [download from Firefo
 
 Or, manually:
 
-Clone or [download](https://github.com/galib-i/filtered/releases/latest) (and unzip) this repository, then load it into your browser:
+Clone or [download](https://github.com/galib-i/filtered/releases/latest)
+(and unzip) this repository, then load it into your browser:
 
 For Chromium-based browsers:
 
@@ -32,5 +33,7 @@ For Chromium-based browsers:
 For Firefox-based browsers:
 
 1. Open `about:debugging` in your browser.
+
+
 2. Click "This Firefox" in the left sidebar.
 3. Click "Load Temporary Add-on..." and select `manifest.json` from the project's folder.
