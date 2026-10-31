@@ -1,5 +1,7 @@
+<!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
     <link rel="stylesheet" href="popup.css" />
     <link
       rel="stylesheet"
@@ -7,48 +9,78 @@
     />
   </head>
   <body>
-    <label for="negativeBrands">Enter terms to hide (comma-separated):</label>
-    <textarea id="negativeBrands" placeholder="Shein, Primark, Y2K, Oversized..."></textarea>
+    <div class="section-head">
+      <span class="section-title">Hide listings containing</span>
+      <span class="section-count hide-count" id="hideCount">0</span>
+    </div>
+    <textarea
+      class="stack-hide"
+      id="negativeBrands"
+      placeholder="Shein, Primark, Y2K, Oversized..."
+    ></textarea>
 
-    <div id="options">
+    <div class="options-wrapper">
       <ul class="options-list">
-        <!-- Apply To Row -->
         <li class="option apply-to-row">
           <span class="apply-to-label">Apply to:</span>
-          <input type="checkbox" id="applyToBrands" checked />
+          <input type="checkbox" id="applyToBrands" />
           <label class="checkbox-label" for="applyToBrands">Brands</label>
 
           <input type="checkbox" id="applyToTitles" />
           <label class="checkbox-label" for="applyToTitles">Titles</label>
         </li>
 
-        <!-- Partial Matches -->
         <li class="option">
           <input type="checkbox" id="enablePartialMatching" />
           <label class="checkbox-label" for="enablePartialMatching">Hide partial matches</label>
         </li>
       </ul>
-
-      <hr class="divider" />
-
-      <ul class="options-list">
-        <!-- Hide Wardrobe Spotlight -->
-        <li class="option">
-          <input type="checkbox" id="hideWardrobeSpotlight" />
-          <label class="checkbox-label" for="hideWardrobeSpotlight">Hide wardrobe spotlight</label>
-        </li>
-
-        <!-- Show Item Titles -->
-        <li class="option">
-          <input type="checkbox" id="showItemTitles" />
-          <label class="checkbox-label" for="showItemTitles">Show item titles</label>
-          <!-- GitHub -->
-          <a href="https://github.com/galib-i/filtered" target="_blank" style="margin-left: auto">
-            <i class="fa-brands fa-github"></i>
-          </a>
-        </li>
-      </ul>
     </div>
+
+    <hr class="divider" />
+
+    <div class="keep-section keep-collapse-off is-off" id="narrowSection">
+      <div class="section-head with-leading-toggle">
+        <label class="mini-switch" title="Enable title whitelist">
+          <input type="checkbox" id="enableNarrowToTitles" aria-label="Enable title whitelist" />
+          <span class="mini-track"><span class="mini-thumb"></span></span>
+        </label>
+        <span class="section-title" id="narrowLabel">Narrow to specific titles</span>
+        <span class="section-count keep-count" id="narrowCount">0</span>
+      </div>
+      <input
+        type="text"
+        class="keep-input"
+        id="narrowToTitles"
+        placeholder="504, bundle..."
+        disabled
+      />
+      <p class="hint" id="narrowHint"></p>
+    </div>
+
+    <hr class="divider" />
+
+    <ul class="options-list">
+      <li class="option">
+        <input type="checkbox" class="neutral-check" id="hideWardrobeSpotlight" />
+        <label class="checkbox-label" for="hideWardrobeSpotlight">Hide wardrobe spotlight</label>
+      </li>
+
+      <li class="option">
+        <input type="checkbox" class="neutral-check" id="showItemTitles" />
+        <label class="checkbox-label" for="showItemTitles">Show item titles</label>
+        <a
+          href="https://github.com/galib-i/filtered"
+          target="_blank"
+          title="View source"
+          aria-label="View source"
+          style="margin-left: auto"
+        >
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </li>
+    </ul>
+    <script src="../settings.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -8,7 +8,7 @@ function debounce(func, delay) {
   };
 }
 
-const cleanBrands = (input) =>
+const cleanTerms = (input) =>
   input
     .trim()
     .replace(/\s+/g, " ") // Multiple spaces
@@ -16,56 +16,105 @@ const cleanBrands = (input) =>
     .replace(/,+/g, ",") // Multiple commas to single comma
     .replace(/^,|,$/g, ""); // Remove leading/trailing commas
 
-document.addEventListener("DOMContentLoaded", () => {
-  const negativeBrandsTextarea = document.getElementById("negativeBrands");
-  const applyToBrandsCheckbox = document.getElementById("applyToBrands");
-  const applyToTitlesCheckbox = document.getElementById("applyToTitles");
-  const enablePartialMatchingCheckbox = document.getElementById("enablePartialMatching");
-  const hideWardrobeSpotlightCheckbox = document.getElementById("hideWardrobeSpotlight");
-  const showItemTitlesCheckbox = document.getElementById("showItemTitles");
+const countTerms = (input) =>
+  input && input.trim()
+    ? input
+        .split(",")
+        .map((term) => term.trim())
+        .filter(Boolean).length
+    : 0;
 
-  const STORAGE_KEYS = [
-    "negativeBrands",
-    "applyToBrands",
-    "applyToTitles",
-    "enablePartialMatching",
-    "hideWardrobeSpotlight",
-    "showItemTitles",
-  ];
-  const DEBOUCE = 300; // ms
+document.addEventListener("DOMContentLoaded", () => {
+  const el = (id) => document.getElementById(id);
+
+  const negativeBrandsTextarea = el("negativeBrands");
+  const narrowToTitlesInput = el("narrowToTitles");
+  const enableNarrowToTitlesCheckbox = el("enableNarrowToTitles");
+  const narrowSection = el("narrowSection");
+  const narrowLabel = el("narrowLabel");
+  const hideCount = el("hideCount");
+  const narrowCount = el("narrowCount");
+  const narrowHint = el("narrowHint");
+
+  const KEYS = Object.keys(DEFAULT_SETTINGS);
+  const DEBOUNCE = 300; // ms
+
+  const isCheckbox = (key) => typeof DEFAULT_SETTINGS[key] === "boolean";
+
+  const renderCounts = () => {
+    const hiddenTerms = countTerms(negativeBrandsTextarea.value);
+    const narrowTerms = countTerms(narrowToTitlesInput.value);
+
+    hideCount.innerText = hiddenTerms;
+    hideCount.hidden = hiddenTerms === 0;
+    narrowCount.innerText = narrowTerms;
+    narrowCount.hidden = narrowTerms === 0;
+    narrowHint.innerText = !enableNarrowToTitlesCheckbox.checked
+      ? ""
+      : narrowTerms === 0
+        ? "Nothing narrowed yet"
+        : hiddenTerms > 0
+          ? "Hidden terms are still removed"
+          : "Only narrowing to titles";
+  };
+
+  const renderNarrow = () => {
+    const enabled = enableNarrowToTitlesCheckbox.checked;
+    narrowSection.classList.toggle("is-off", !enabled);
+    narrowToTitlesInput.disabled = !enabled;
+    narrowLabel.innerText = enabled ? "Narrow to titles containing" : "Narrow to specific titles";
+    renderCounts();
+  };
+
+  let lastSaved = "";
 
   const saveSettings = (clean = false) => {
     if (clean) {
-      negativeBrandsTextarea.value = cleanBrands(negativeBrandsTextarea.value);
+      negativeBrandsTextarea.value = cleanTerms(negativeBrandsTextarea.value);
+      narrowToTitlesInput.value = cleanTerms(narrowToTitlesInput.value);
     }
 
-    chrome.storage.sync.set({
-      negativeBrands: negativeBrandsTextarea.value,
-      applyToBrands: applyToBrandsCheckbox.checked,
-      applyToTitles: applyToTitlesCheckbox.checked,
-      enablePartialMatching: enablePartialMatchingCheckbox.checked,
-      hideWardrobeSpotlight: hideWardrobeSpotlightCheckbox.checked,
-      showItemTitles: showItemTitlesCheckbox.checked,
+    renderCounts();
+
+    const snapshot = {};
+    KEYS.forEach((key) => {
+      snapshot[key] = isCheckbox(key) ? el(key).checked : el(key).value;
     });
+
+    // Only write when something changed: sync storage allows ~120 writes a minute
+    const serialised = JSON.stringify(snapshot);
+    if (serialised === lastSaved) return;
+    lastSaved = serialised;
+
+    chrome.storage.sync.set(snapshot);
   };
 
-  const dsaveSettings = debounce(saveSettings, DEBOUCE);
+  const dsaveSettings = debounce(saveSettings, DEBOUNCE);
 
-  chrome.storage.sync.get(STORAGE_KEYS, (result) => {
-    negativeBrandsTextarea.value = result.negativeBrands || "";
-    applyToBrandsCheckbox.checked = result.applyToBrands ?? true;
-    applyToTitlesCheckbox.checked = result.applyToTitles ?? true;
-    enablePartialMatchingCheckbox.checked = !!result.enablePartialMatching;
-    hideWardrobeSpotlightCheckbox.checked = !!result.hideWardrobeSpotlight;
-    showItemTitlesCheckbox.checked = !!result.showItemTitles;
+  chrome.storage.sync.get(KEYS, (result) => {
+    KEYS.forEach((key) => {
+      const value = result[key] ?? DEFAULT_SETTINGS[key];
+      if (isCheckbox(key)) el(key).checked = value;
+      else el(key).value = value;
+    });
+    renderNarrow();
   });
 
-  negativeBrandsTextarea.addEventListener("input", (e) => {
-    if (e.target === negativeBrandsTextarea) dsaveSettings();
-  });
-
-  negativeBrandsTextarea.addEventListener("blur", () => {
+  // Toggles drive the derived UI, then persist
+  document.addEventListener("change", () => {
+    renderNarrow();
     saveSettings(true);
+  });
+
+  [negativeBrandsTextarea, narrowToTitlesInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      renderCounts();
+      dsaveSettings();
+    });
+
+    input.addEventListener("blur", () => {
+      saveSettings(true);
+    });
   });
 
   window.addEventListener("blur", () => {
@@ -75,10 +124,4 @@ document.addEventListener("DOMContentLoaded", () => {
   negativeBrandsTextarea.addEventListener("keydown", (e) => {
     if (e.key === "Enter") e.preventDefault();
   });
-
-  applyToBrandsCheckbox.addEventListener("change", () => saveSettings(true));
-  applyToTitlesCheckbox.addEventListener("change", () => saveSettings(true));
-  enablePartialMatchingCheckbox.addEventListener("change", () => saveSettings(true));
-  hideWardrobeSpotlightCheckbox.addEventListener("change", () => saveSettings(true));
-  showItemTitlesCheckbox.addEventListener("change", () => saveSettings(true));
 });

@@ -1,27 +1,32 @@
-const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Use testID to specifically target titles only, sizes and condition use the same selector
+const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Titles only: size and condition share this selector
 const ITEM_CONTAINER_SELECTORS =
   "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
 const WARDROBE_SPOTLIGHT_SELECTOR = "[class*='feed-grid__item--full-row']";
 const ITEM_TITLE_SELECTORS =
   "[class*='new-item-box__container'], [class*='feed-grid__item-content'], [class*='item-view-items__item']";
 
-// Defaults
-let settings = {
-  negativeBrands: "",
-  applyToBrands: true,
-  applyToTitles: false,
-  enablePartialMatching: false,
-  hideWardrobeSpotlight: false,
-  showItemTitles: false,
-};
+let settings = { ...DEFAULT_SETTINGS };
 
-// Matching for both brands and titles
-function isNegativeMatch(text, negativeList, enablePartialMatching) {
+// Alt reads "title, size, condition": first field only, so size and condition never match
+const titleFromAlt = (img) => (img?.alt ? img.alt.split(",")[0].trim() : "");
+
+const parseTerms = (value) =>
+  value
+    .split(",")
+    .map((term) => term.trim().toLowerCase().replace(/\s+/g, " "))
+    .filter(Boolean);
+
+const itemTitle = (itemContainer) =>
+  titleFromAlt(itemContainer.querySelector("img[alt]"))
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+function isNegativeMatch(text, negativeList) {
   if (!text) return false;
 
   return negativeList.some((negative) =>
-    enablePartialMatching
-      ? negative.length >= 2 && text.includes(negative) // Partial matching for 2+ characters
+    settings.enablePartialMatching
+      ? negative.length >= 2 && text.includes(negative) // a single letter would risk hiding the whole feed
       : text === negative,
   );
 }
@@ -29,7 +34,7 @@ function isNegativeMatch(text, negativeList, enablePartialMatching) {
 function filterByBrands(negativeBrandList) {
   document.querySelectorAll(BRAND_SELECTORS).forEach((brandNode) => {
     const brandName = brandNode.textContent.trim().toLowerCase();
-    if (isNegativeMatch(brandName, negativeBrandList, settings.enablePartialMatching)) {
+    if (isNegativeMatch(brandName, negativeBrandList)) {
       const itemContainer = brandNode.closest(ITEM_CONTAINER_SELECTORS);
       if (itemContainer) {
         itemContainer.style.display = "none";
@@ -43,37 +48,42 @@ function filterByTitles(negativeBrandList) {
     // Skip if the brand filter already hid
     if (itemContainer.style.display === "none") return;
 
-    const img = itemContainer.querySelector("img[alt]");
-    if (img && img.alt) {
-      // Extract the title before the first comma
-      const titleText = img.alt.split(",")[0].trim().toLowerCase();
-      if (isNegativeMatch(titleText, negativeBrandList, settings.enablePartialMatching)) {
-        itemContainer.style.display = "none";
-      }
+    if (isNegativeMatch(itemTitle(itemContainer), negativeBrandList)) {
+      itemContainer.style.display = "none";
+    }
+  });
+}
+
+// Hide anything without a narrow term
+function narrowByTitles(narrowList) {
+  document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
+    if (itemContainer.style.display === "none") return;
+
+    const title = itemTitle(itemContainer);
+    if (title && !narrowList.some((term) => title.includes(term))) {
+      itemContainer.style.display = "none";
     }
   });
 }
 
 function filterItems() {
-  // Reset all items
+  // Clear old hides, so edits take effect
   document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
     itemContainer.style.display = "";
   });
 
-  if (!settings.negativeBrands) return;
-  if (!settings.applyToBrands && !settings.applyToTitles) return;
-
-  const negativeBrandList = settings.negativeBrands
-    .split(",")
-    .map((b) => b.trim().toLowerCase())
-    .filter(Boolean);
-
-  if (settings.applyToBrands) {
-    filterByBrands(negativeBrandList);
+  if (settings.applyToBrands || settings.applyToTitles) {
+    const negativeBrandList = parseTerms(settings.negativeBrands);
+    if (negativeBrandList.length) {
+      if (settings.applyToBrands) filterByBrands(negativeBrandList);
+      if (settings.applyToTitles) filterByTitles(negativeBrandList);
+    }
   }
 
-  if (settings.applyToTitles) {
-    filterByTitles(negativeBrandList);
+  if (settings.enableNarrowToTitles) {
+    // One letter would blank the feed, so require two
+    const narrowList = parseTerms(settings.narrowToTitles).filter((term) => term.length >= 2);
+    if (narrowList.length) narrowByTitles(narrowList);
   }
 }
 
@@ -92,35 +102,26 @@ function showItemTitles() {
   }
 
   document.querySelectorAll(ITEM_TITLE_SELECTORS).forEach((item) => {
-    const img = item.querySelector("img[alt]");
-    if (img && img.alt) {
-      const altText = img.alt;
-      const parts = altText.split(",");
-      const truncatedText = parts[0];
+    const truncatedText = titleFromAlt(item.querySelector("img[alt]"));
+    if (!truncatedText) return;
 
-      // Find the .title-content element
-      const titleContentElem = item.querySelector("[class*='title-content']");
-      if (titleContentElem) {
-        // Avoid inserting multiple times
-        if (!item.querySelector(".vinted-filter-title")) {
-          const titleElem = document.createElement("div");
-          titleElem.textContent = truncatedText;
-          titleElem.className = "vinted-filter-title";
+    const titleContentElem = item.querySelector("[class*='title-content']");
+    if (!titleContentElem) return;
 
-          // Copy CSS classes from the price element
-          const priceElem = titleContentElem.querySelector('[data-testid$="--price-text"]');
-          if (priceElem) {
-            priceElem.classList.forEach((cls) => {
-              titleElem.classList.add(cls);
-            });
-            titleElem.style.fontWeight = "500";
-          }
+    if (item.querySelector(".vinted-filter-title")) return;
 
-          // Insert before .title-content
-          titleContentElem.parentNode.insertBefore(titleElem, titleContentElem);
-        }
-      }
+    const titleElem = document.createElement("div");
+    titleElem.textContent = truncatedText;
+    titleElem.className = "vinted-filter-title";
+
+    // Copy the price styling
+    const priceElem = titleContentElem.querySelector('[data-testid$="--price-text"]');
+    if (priceElem) {
+      priceElem.classList.forEach((cls) => titleElem.classList.add(cls));
+      titleElem.style.fontWeight = "500";
     }
+
+    titleContentElem.parentNode.insertBefore(titleElem, titleContentElem);
   });
 }
 
@@ -147,34 +148,35 @@ function observeDynamicContent() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-chrome.storage.sync.get(Object.keys(settings), (result) => {
+chrome.storage.sync.get(Object.keys(DEFAULT_SETTINGS), (result) => {
   Object.assign(settings, result);
   applyRules();
   observeDynamicContent();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "sync") {
-    for (let [key, { newValue }] of Object.entries(changes)) {
-      settings[key] = newValue;
-    }
+  if (area !== "sync") return;
 
-    // Run filterItems if any filter settings change
-    if (
-      changes.negativeBrands ||
-      changes.enablePartialMatching ||
-      changes.applyToBrands ||
-      changes.applyToTitles
-    ) {
-      filterItems();
-    }
+  for (const [key, { newValue }] of Object.entries(changes)) {
+    if (key in DEFAULT_SETTINGS) settings[key] = newValue;
+  }
 
-    if (changes.hideWardrobeSpotlight) {
-      hideWardrobeSpotlight();
-    }
+  if (
+    changes.negativeBrands ||
+    changes.enablePartialMatching ||
+    changes.applyToBrands ||
+    changes.applyToTitles ||
+    changes.enableNarrowToTitles ||
+    changes.narrowToTitles
+  ) {
+    filterItems();
+  }
 
-    if (changes.showItemTitles) {
-      showItemTitles();
-    }
+  if (changes.hideWardrobeSpotlight) {
+    hideWardrobeSpotlight();
+  }
+
+  if (changes.showItemTitles) {
+    showItemTitles();
   }
 });

@@ -1,7 +1,7 @@
 {
-  "name": "Filtered",
+  "name": "Filtered: clean up Vinted search results",
   "description": "Clean up your Vinted search results.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js",
@@ -53,7 +53,7 @@
         "*://*.vinted.si/*",
         "*://*.vinted.sk/*"
       ],
-      "js": ["scripts/content.js"]
+      "js": ["settings.js", "scripts/content.js"]
     }
   ],
   "permissions": ["storage"],
