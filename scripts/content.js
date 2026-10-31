@@ -1,7 +1,9 @@
 const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Titles only: size and condition share this selector
 const ITEM_CONTAINER_SELECTORS =
   "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
-const WARDROBE_SPOTLIGHT_SELECTOR = "[class*='feed-grid__item--full-row']";
+// Search pages mark the spotlight full-row; the homepage uses closet-promotion
+const WARDROBE_SPOTLIGHT_SELECTOR =
+  "[class*='feed-grid__item--full-row'], [data-testid^='closet-promotion-']";
 const ITEM_TITLE_SELECTORS =
   "[class*='new-item-box__container'], [class*='feed-grid__item-content'], [class*='item-view-items__item']";
 
@@ -17,9 +19,7 @@ const parseTerms = (value) =>
     .filter(Boolean);
 
 const itemTitle = (itemContainer) =>
-  titleFromAlt(itemContainer.querySelector("img[alt]"))
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+  titleFromAlt(itemContainer.querySelector("img[alt]")).toLowerCase().replace(/\s+/g, " ");
 
 function isNegativeMatch(text, negativeList) {
   if (!text) return false;
