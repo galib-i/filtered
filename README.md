@@ -1,13 +1,14 @@
 # Filtered
 
-Better Vinted browsing.
-
-<p align="center">
-  <img width="595" alt="tutorial" src="https://github.com/user-attachments/assets/da00d176-9cf4-489a-91a5-2f4637b88a93" />
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/ecfbb99f-ee06-4d62-9e66-46cfd07afd6d" width="800" controls></video>
+</div>
 
 > [!NOTE]
-> Supports all countries (domains), but may break due to layout updates.
+> Supports all countries (domains).
+
+> [!IMPORTANT]
+> This extension only changes what you see on screen. It relies on user-made titles and may break if layouts are updated - please report any issues.
 
 - Filter out items from unwanted brands.
 - Filter out items by title keywords.
@@ -34,7 +35,5 @@ For Chromium-based browsers:
 For Firefox-based browsers:
 
 1. Open `about:debugging` in your browser.
-
-
 2. Click "This Firefox" in the left sidebar.
 3. Click "Load Temporary Add-on..." and select `manifest.json` from the project's folder.
