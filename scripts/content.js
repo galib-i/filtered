@@ -59,8 +59,9 @@ function narrowByTitles(narrowList) {
   document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
     if (itemContainer.style.display === "none") return;
 
+    // No title can't match a term, so hide it
     const title = itemTitle(itemContainer);
-    if (title && !narrowList.some((term) => title.includes(term))) {
+    if (!narrowList.some((term) => title.includes(term))) {
       itemContainer.style.display = "none";
     }
   });
