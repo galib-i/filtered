@@ -1,9 +1,9 @@
 const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Titles only: size and condition share this selector
 const ITEM_CONTAINER_SELECTORS =
   "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
-// Search pages mark the spotlight full-row; the homepage uses closet-promotion
+// Search pages mark the spotlight full-row; the homepage uses closet-promotion within a homepage-block
 const WARDROBE_SPOTLIGHT_SELECTOR =
-  "[class*='feed-grid__item--full-row'], [data-testid^='closet-promotion-']";
+  "[class*='feed-grid__item--full-row'], [data-testid='homepage-block']:has([data-testid^='closet-promotion-'])";
 const ITEM_TITLE_SELECTORS =
   "[class*='new-item-box__container'], [class*='feed-grid__item-content'], [class*='item-view-items__item']";
 
@@ -170,7 +170,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
     changes.enableNarrowToTitles ||
     changes.narrowToTitles
   ) {
-    filterItems();
+    applyRules();
   }
 
   if (changes.hideWardrobeSpotlight) {
