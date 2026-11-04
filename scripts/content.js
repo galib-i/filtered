@@ -72,7 +72,7 @@ function filterItems() {
     itemContainer.style.display = "";
   });
 
-  if (settings.applyToBrands || settings.applyToTitles) {
+  if (settings.enableHideFilters && (settings.applyToBrands || settings.applyToTitles)) {
     const negativeBrandList = parseTerms(settings.negativeBrands);
     if (negativeBrandList.length) {
       if (settings.applyToBrands) filterByBrands(negativeBrandList);
@@ -162,6 +162,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 
   if (
+    changes.enableHideFilters ||
     changes.negativeBrands ||
     changes.enablePartialMatching ||
     changes.applyToBrands ||

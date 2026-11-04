@@ -1,4 +1,5 @@
 const DEFAULT_SETTINGS = {
+  enableHideFilters: true,
   negativeBrands: "",
   applyToBrands: true,
   applyToTitles: false,

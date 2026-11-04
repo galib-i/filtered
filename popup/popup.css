@@ -39,9 +39,10 @@ textarea:focus {
   background: #ffffff;
 }
 
-.stack-hide {
+.hide-input {
   display: block;
   min-height: 128px;
+  margin-top: 16px;
   margin-bottom: 0;
 }
 
@@ -130,19 +131,19 @@ input[type="checkbox"].neutral-check {
   background: #fff5f5;
 }
 
-.section-count.keep-count {
+.section-count.narrow-count {
   color: #16a34a;
   background: #f4fdf7;
 }
 
-.keep-input {
+.narrow-input {
   font-family: inherit;
   width: 100%;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 8px;
   font-size: 15px;
-  margin-top: 6px;
+  margin-top: 12px;
   background: #fafafa;
   color: #15191a;
   transition:
@@ -150,7 +151,7 @@ input[type="checkbox"].neutral-check {
     box-shadow 0.2s;
 }
 
-.keep-input:focus {
+.narrow-input:focus {
   border: 1.5px solid #16a34a;
   outline: none;
   background: #ffffff;
@@ -227,21 +228,34 @@ input[type="checkbox"].neutral-check {
 
 .section-head.with-leading-toggle .section-count {
   margin-left: auto;
-  line-height: 1.4;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 6px;
 }
 
-/* Collapsed when the toggle is off */
-.keep-collapse-off.is-off .keep-input,
-.keep-collapse-off.is-off .hint,
-.keep-collapse-off.is-off .section-count {
+/* Sections collapse to just their heading when their toggle is off */
+.hide-section.is-off .hide-input,
+.hide-section.is-off .options-wrapper,
+.hide-section.is-off .section-count {
   display: none;
 }
 
+.narrow-section.is-off .narrow-input,
+.narrow-section.is-off .hint,
+.narrow-section.is-off .section-count {
+  display: none;
+}
+
+/* Hide section uses the red accent */
+.hide-section .mini-switch input:checked + .mini-track {
+  background: #ff2121;
+}
+
 /* Off: drop the trailing divider, keep the 12px gap above */
-.keep-collapse-off.is-off {
+.narrow-section.is-off {
   margin-bottom: 12px;
 }
 
-.keep-collapse-off.is-off + .divider {
+.narrow-section.is-off + .divider {
   display: none;
 }

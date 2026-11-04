@@ -21,13 +21,16 @@ const countTerms = (input) =>
     ? input
         .split(",")
         .map((term) => term.trim())
-        .filter(Boolean).length
+        // Single characters are ignored by the filters, so don't count them
+        .filter((term) => term.length >= 2).length
     : 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   const el = (id) => document.getElementById(id);
 
   const negativeBrandsTextarea = el("negativeBrands");
+  const enableHideFiltersCheckbox = el("enableHideFilters");
+  const hideSection = el("hideSection");
   const narrowToTitlesInput = el("narrowToTitles");
   const enableNarrowToTitlesCheckbox = el("enableNarrowToTitles");
   const narrowSection = el("narrowSection");
@@ -53,9 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
       ? ""
       : narrowTerms === 0
         ? "Nothing narrowed yet"
-        : hiddenTerms > 0
+        : enableHideFiltersCheckbox.checked && hiddenTerms > 0
           ? "Hidden terms are still removed"
           : "Only narrowing to titles";
+  };
+
+  const renderHide = () => {
+    const enabled = enableHideFiltersCheckbox.checked;
+    hideSection.classList.toggle("is-off", !enabled);
+    negativeBrandsTextarea.disabled = !enabled;
+    renderCounts();
   };
 
   const renderNarrow = () => {
@@ -97,11 +107,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isCheckbox(key)) el(key).checked = value;
       else el(key).value = value;
     });
+    renderHide();
     renderNarrow();
   });
 
   // Toggles drive the derived UI, then persist
   document.addEventListener("change", () => {
+    renderHide();
     renderNarrow();
     saveSettings(true);
   });

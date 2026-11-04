@@ -9,48 +9,54 @@
     />
   </head>
   <body>
-    <div class="section-head">
-      <span class="section-title">Hide listings containing</span>
-      <span class="section-count hide-count" id="hideCount">0</span>
-    </div>
-    <textarea
-      class="stack-hide"
-      id="negativeBrands"
-      placeholder="Shein, Primark, Y2K, Oversized..."
-    ></textarea>
+    <div class="hide-section" id="hideSection">
+      <div class="section-head with-leading-toggle">
+        <label class="mini-switch" title="Enable hiding terms">
+          <input type="checkbox" id="enableHideFilters" aria-label="Enable hiding terms" />
+          <span class="mini-track"><span class="mini-thumb"></span></span>
+        </label>
+        <span class="section-title">Hide listings containing</span>
+        <span class="section-count hide-count" id="hideCount">0</span>
+      </div>
+      <textarea
+        class="hide-input"
+        id="negativeBrands"
+        placeholder="Shein, Primark, Y2K, Oversized..."
+      ></textarea>
 
-    <div class="options-wrapper">
-      <ul class="options-list">
-        <li class="option apply-to-row">
-          <span class="apply-to-label">Apply to:</span>
-          <input type="checkbox" id="applyToBrands" />
-          <label class="checkbox-label" for="applyToBrands">Brands</label>
+      <div class="options-wrapper">
+        <ul class="options-list">
+          <li class="option apply-to-row">
+            <span class="apply-to-label">Apply to:</span>
+            <input type="checkbox" id="applyToBrands" />
+            <label class="checkbox-label" for="applyToBrands">Brands</label>
 
-          <input type="checkbox" id="applyToTitles" />
-          <label class="checkbox-label" for="applyToTitles">Titles</label>
-        </li>
+            <input type="checkbox" id="applyToTitles" />
+            <label class="checkbox-label" for="applyToTitles">Titles</label>
+          </li>
 
-        <li class="option">
-          <input type="checkbox" id="enablePartialMatching" />
-          <label class="checkbox-label" for="enablePartialMatching">Hide partial matches</label>
-        </li>
-      </ul>
+          <li class="option">
+            <input type="checkbox" id="enablePartialMatching" />
+            <label class="checkbox-label" for="enablePartialMatching">Hide partial matches</label>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <hr class="divider" />
 
-    <div class="keep-section keep-collapse-off is-off" id="narrowSection">
+    <div class="narrow-section is-off" id="narrowSection">
       <div class="section-head with-leading-toggle">
         <label class="mini-switch" title="Enable title whitelist">
           <input type="checkbox" id="enableNarrowToTitles" aria-label="Enable title whitelist" />
           <span class="mini-track"><span class="mini-thumb"></span></span>
         </label>
         <span class="section-title" id="narrowLabel">Narrow to specific titles</span>
-        <span class="section-count keep-count" id="narrowCount">0</span>
+        <span class="section-count narrow-count" id="narrowCount">0</span>
       </div>
       <input
         type="text"
-        class="keep-input"
+        class="narrow-input"
         id="narrowToTitles"
         placeholder="504, bundle..."
         disabled
