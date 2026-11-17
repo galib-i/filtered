@@ -1,7 +1,7 @@
 # Filtered
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/ecfbb99f-ee06-4d62-9e66-46cfd07afd6d" width="800" controls></video>
+  <video src="https://github.com/user-attachments/assets/5c21aef8-3cbc-42db-883b-0774c0d66333" width="800" controls></video>
 </div>
 
 > [!NOTE]
@@ -10,10 +10,10 @@
 > [!IMPORTANT]
 > This extension only changes what you see on screen. It relies on user-made titles and may break if layouts are updated - please report any issues.
 
-- Filter out items from unwanted brands.
-- Filter out items by title keywords.
+- Hide items from unwanted brands.
+- Hide items by title keywords.
 - Narrow results to the titles you want, hiding everything else.
-- Hide listings below a minimum number of favourites.
+- Hide items below a minimum number of favourites.
 - Hide wardrobe spotlights.
 - Display item titles directly, without needing to click on them.
 
