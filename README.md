@@ -13,6 +13,7 @@
 - Filter out items from unwanted brands.
 - Filter out items by title keywords.
 - Narrow results to the titles you want, hiding everything else.
+- Hide listings below a minimum number of favourites.
 - Hide wardrobe spotlights.
 - Display item titles directly, without needing to click on them.
 

@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const hideCount = el("hideCount");
   const narrowCount = el("narrowCount");
   const narrowHint = el("narrowHint");
+  const enableMinLikesCheckbox = el("enableMinLikes");
+  const minLikesInput = el("minLikes");
+  const likesSection = el("likesSection");
 
   const KEYS = Object.keys(DEFAULT_SETTINGS);
   const DEBOUNCE = 300; // ms
@@ -76,6 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCounts();
   };
 
+  const renderLikes = () => {
+    const enabled = enableMinLikesCheckbox.checked;
+    likesSection.classList.toggle("is-off", !enabled);
+    minLikesInput.disabled = !enabled;
+  };
+
+  // Keeps a plain positive integer
+  const cleanLikesInput = () => {
+    const digits = minLikesInput.value.replace(/\D.*$/, "").replace(/^0+/, "");
+    if (digits !== minLikesInput.value) minLikesInput.value = digits;
+  };
+
   let lastSaved = "";
 
   const saveSettings = (clean = false) => {
@@ -109,12 +124,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     renderHide();
     renderNarrow();
+    renderLikes();
+    cleanLikesInput();
   });
 
   // Toggles drive the derived UI, then persist
   document.addEventListener("change", () => {
     renderHide();
     renderNarrow();
+    renderLikes();
     saveSettings(true);
   });
 
@@ -127,6 +145,16 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("blur", () => {
       saveSettings(true);
     });
+  });
+
+  minLikesInput.addEventListener("input", () => {
+    cleanLikesInput();
+    dsaveSettings();
+  });
+
+  minLikesInput.addEventListener("blur", () => {
+    cleanLikesInput();
+    saveSettings();
   });
 
   window.addEventListener("blur", () => {

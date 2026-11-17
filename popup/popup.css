@@ -157,6 +157,27 @@ input[type="checkbox"].neutral-check {
   background: #ffffff;
 }
 
+.likes-input:focus {
+  border-color: #ff2121;
+}
+
+.likes-section.is-off .likes-input,
+.likes-section.is-off .hint {
+  display: none;
+}
+
+.likes-section.is-off {
+  margin-bottom: 12px;
+}
+
+.likes-section.is-off + .divider {
+  display: none;
+}
+
+.likes-section .mini-switch input:checked + .mini-track {
+  background: #ff2121;
+}
+
 .hint {
   font-size: 11px;
   color: #8a9495;
@@ -252,10 +273,12 @@ input[type="checkbox"].neutral-check {
 }
 
 /* Off: drop the trailing divider, keep the 12px gap above */
-.narrow-section.is-off {
+.narrow-section.is-off,
+.hide-section.is-off {
   margin-bottom: 12px;
 }
 
-.narrow-section.is-off + .divider {
+.narrow-section.is-off + .divider,
+.hide-section.is-off + .divider {
   display: none;
 }

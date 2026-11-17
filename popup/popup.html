@@ -66,6 +66,30 @@
 
     <hr class="divider" />
 
+    <div class="likes-section is-off" id="likesSection">
+      <div class="section-head with-leading-toggle">
+        <label class="mini-switch" title="Enable minimum favourites">
+          <input type="checkbox" id="enableMinLikes" aria-label="Enable minimum favourites" />
+          <span class="mini-track"><span class="mini-thumb"></span></span>
+        </label>
+        <span class="section-title">Hide by favourite count</span>
+      </div>
+      <input
+        type="number"
+        class="narrow-input likes-input"
+        id="minLikes"
+        min="1"
+        step="1"
+        inputmode="numeric"
+        placeholder="10"
+        aria-label="Minimum favourites"
+        disabled
+      />
+      <p class="hint">No count means 0.</p>
+    </div>
+
+    <hr class="divider" />
+
     <ul class="options-list">
       <li class="option">
         <input type="checkbox" class="neutral-check" id="hideWardrobeSpotlight" />

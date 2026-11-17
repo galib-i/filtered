@@ -8,4 +8,6 @@ const DEFAULT_SETTINGS = {
   showItemTitles: false,
   enableNarrowToTitles: false,
   narrowToTitles: "",
+  enableMinLikes: false,
+  minLikes: "",
 };

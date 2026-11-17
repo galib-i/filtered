@@ -1,4 +1,5 @@
 const BRAND_SELECTORS = '[data-testid$="--description-title"]'; // Titles only: size and condition share this selector
+const FAVOURITE_COUNT_SELECTOR = '[data-testid="favourite-count-text"]';
 const ITEM_CONTAINER_SELECTORS =
   "[class*='homepage-blocks__item'], [class*='feed-grid__item']:not([class*='feed-grid__item--full-row']):not([class*='feed-grid__item-content']):not([class*='feed-grid__item-inner']), [class*='item-view-items__item']";
 // Search pages mark the spotlight full-row; the homepage uses closet-promotion within a homepage-block
@@ -11,6 +12,14 @@ let settings = { ...DEFAULT_SETTINGS };
 
 // Alt reads "title, size, condition": first field only, so size and condition never match
 const titleFromAlt = (img) => (img?.alt ? img.alt.split(",")[0].trim() : "");
+
+// "4" or "1.2k"; Vinted renders no count node at all for zero favourites
+const parseLikes = (text) => {
+  const raw = (text ?? "").trim().toLowerCase();
+  const count = parseFloat(raw.replace(/[^\d.]/g, ""));
+  if (!Number.isFinite(count)) return 0;
+  return Math.round(count * (raw.endsWith("k") ? 1000 : 1));
+};
 
 const parseTerms = (value) =>
   value
@@ -54,6 +63,18 @@ function filterByTitles(negativeBrandList) {
   });
 }
 
+function filterByLikes(minLikes) {
+  document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
+    if (itemContainer.style.display === "none") return;
+
+    // No count means no favourites yet, so it counts as zero
+    const countNode = itemContainer.querySelector(FAVOURITE_COUNT_SELECTOR);
+    if (parseLikes(countNode?.textContent) < minLikes) {
+      itemContainer.style.display = "none";
+    }
+  });
+}
+
 // Hide anything without a narrow term
 function narrowByTitles(narrowList) {
   document.querySelectorAll(ITEM_CONTAINER_SELECTORS).forEach((itemContainer) => {
@@ -85,6 +106,11 @@ function filterItems() {
     // One letter would blank the feed, so require two
     const narrowList = parseTerms(settings.narrowToTitles).filter((term) => term.length >= 2);
     if (narrowList.length) narrowByTitles(narrowList);
+  }
+
+  if (settings.enableMinLikes) {
+    const minLikes = parseInt(settings.minLikes, 10);
+    if (minLikes > 0) filterByLikes(minLikes);
   }
 }
 
@@ -169,7 +195,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
     changes.applyToBrands ||
     changes.applyToTitles ||
     changes.enableNarrowToTitles ||
-    changes.narrowToTitles
+    changes.narrowToTitles ||
+    changes.enableMinLikes ||
+    changes.minLikes
   ) {
     applyRules();
   }
