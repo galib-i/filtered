@@ -132,23 +132,25 @@ function showItemTitles() {
     const truncatedText = titleFromAlt(item.querySelector("img[alt]"));
     if (!truncatedText) return;
 
-    const titleContentElem = item.querySelector("[class*='title-content']");
-    if (!titleContentElem) return;
-
     if (item.querySelector(".vinted-filter-title")) return;
+
+    const priceElem = item.querySelector('[data-testid$="--price-text"]');
+    if (!priceElem) return;
 
     const titleElem = document.createElement("div");
     titleElem.textContent = truncatedText;
     titleElem.className = "vinted-filter-title";
 
     // Copy the price styling
-    const priceElem = titleContentElem.querySelector('[data-testid$="--price-text"]');
-    if (priceElem) {
-      priceElem.classList.forEach((cls) => titleElem.classList.add(cls));
-      titleElem.style.fontWeight = "500";
-    }
+    priceElem.classList.forEach((cls) => {
+      if (!cls.includes("__truncated")) titleElem.classList.add(cls);
+    });
+    titleElem.style.fontWeight = "500";
+    titleElem.style.whiteSpace = "normal";
 
-    titleContentElem.parentNode.insertBefore(titleElem, titleContentElem);
+    let titleParent = priceElem.parentElement;
+    while (getComputedStyle(titleParent).display === "flex") titleParent = titleParent.parentElement;
+    titleParent.insertBefore(titleElem, titleParent.firstElementChild);
   });
 }
 
